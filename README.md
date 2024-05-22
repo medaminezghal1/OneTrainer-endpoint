@@ -63,6 +63,8 @@ sudo apt-get install libgl1
 ## Test
 
 To test it please use postman to send a file on http://127.0.0.1:8000/train_lora?param=your_param_value
+The resulting LoRA file should be found under /home by the end of the training in the .safetensors format.
+
 
 ## Updating
 
