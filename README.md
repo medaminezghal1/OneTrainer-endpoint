@@ -34,31 +34,35 @@ OneTrainer is a one-stop solution for all your stable diffusion training needs.
 
 ## Installation
 
+First, make sure that your machine has the requirements for potentially training any model are available on your machine.
 Installing OneTrainer requires Python 3.10. You can download Python here https://www.python.org/downloads/windows/.
 Then follow these steps:
 
-Automatic installation
+Manual installation (please make sure you clone the repo into /home on a Ubuntu distribution because up until now the directories are set for this type of distribution)
 
 - Clone the repository `git clone https://github.com/Nerogar/OneTrainer.git`
-- Run:
-    - Windows: `install.bat`
-    - Unix based systems: `install.sh`
-
-Manual installation
-
-- Clone the repository `git clone https://github.com/Nerogar/OneTrainer.git`
-- Navigate into the cloned directory `cd OneTrainer`
+- Navigate into the cloned directory `cd OneTrainer-endpoint`
 - Set up a virtual environment `python -m venv venv`
-- Activate the new venv:
-    - Windows: `venv\scripts\activate`
-    - Unix based systems: `source venv/bin/activate`
+- Activate the new venv: `source venv/bin/activate`
 - Install the requirements `pip install -r requirements.txt`
 
-In some linux distribution, you might need to install libGL, for instance on ubuntu you will need to run:
+In some linux distribution, you might need to install libGL and python3.10-venv, for instance on ubuntu you will need to run:
+```
+apt install python3.10-venv
+```
 ```
 sudo apt-get update
 sudo apt-get install libgl1
 ```
+
+## Deploying the endpoint
+
+- Activate the new venv: `source venv/bin/activate`
+- Start the web server : `uvicorn scripts.main:app`
+
+## Test
+
+To test it please use postman to send a file on http://127.0.0.1:8000/train_lora?param=your_param_value
 
 ## Updating
 
