@@ -1,5 +1,5 @@
 # ignores everything except the builtin config files starting with #
-*
+
 !.gitignore
 !\#*
 
