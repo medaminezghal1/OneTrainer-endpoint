@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append('/home/OneTrainer/scripts')
+sys.path.append('/home/OneTrainer-endpoint/scripts')
 
 
 from train import main as train_main
@@ -42,7 +42,7 @@ def download_and_store(csv_file_path):
 
 @app.post("/train_lora")
 async def train_lora(file: UploadFile, param: str = Query(...)):
-    json_file_path = "/home/OneTrainer/training_presets/sdxl_1.0_LoRA_style.json"
+    json_file_path = "/home/OneTrainer-endpoint/training_presets/sdxl_1.0_LoRA_style.json"
     temp_dir = tempfile.mkdtemp()
     temp_file_path = os.path.join(temp_dir, file.filename)
 
