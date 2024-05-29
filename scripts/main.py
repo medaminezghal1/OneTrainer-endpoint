@@ -1,15 +1,4 @@
 import sys
-
-sys.path.append('/home/OneTrainer-endpoint/scripts')
-
-
-from train import main as train_main
-
-from fastapi import FastAPI, File, Query, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
-import uvicorn
-import subprocess
-import json
 import os
 import csv
 from urllib.request import urlopen
@@ -17,7 +6,8 @@ import base64
 import tempfile
 import shutil
 
-app = FastAPI()
+sys.path.append('/home/OneTrainer-endpoint/scripts')
+from train import main as train_main
 
 class ImageTextData:
     def __init__(self, image_url, image_data, text):
@@ -40,43 +30,32 @@ def download_and_store(csv_file_path):
                 print(f"Error downloading {image_url}: {e}")
     return image_data_list
 
-@app.post("/train_lora")
-async def train_lora(file: UploadFile, param: str = Query(...)):
+def train_lora(csv_file_path, param):
     json_file_path = "/home/OneTrainer-endpoint/training_presets/sdxl_1.0_LoRA_style.json"
     temp_dir = tempfile.mkdtemp()
-    temp_file_path = os.path.join(temp_dir, file.filename)
 
     try:
-        with open(temp_file_path, 'wb') as temp_file:
-            temp_file.write(await file.read())
+        image_text_data = download_and_store(csv_file_path)
 
-        image_text_data = download_and_store(temp_file_path)
-
-        dir = "/tmp/training_data"
-        os.makedirs(dir, exist_ok=True)
-
-        response_data = {"downloaded_data": []}
+        training_dir = "/tmp/training_data"
+        os.makedirs(training_dir, exist_ok=True)
 
         for data in image_text_data:
             image_bytes = base64.b64decode(data.image_data)
-            image_filename = os.path.join(dir, data.image_url.split('/')[-1])
+            image_filename = os.path.join(training_dir, data.image_url.split('/')[-1])
             with open(image_filename, 'wb') as image_file:
                 image_file.write(image_bytes)
-            text_filename = os.path.join(dir, f"{data.image_url.split('/')[-1][:-4]}.txt")
+            text_filename = os.path.join(training_dir, f"{data.image_url.split('/')[-1][:-4]}.txt")
             with open(text_filename, 'w') as text_file:
                 text_file.write(data.text)
 
-            response_data["downloaded_data"].append({
-                "image_url": data.image_url,
-                "image_filename": image_filename,
-                "text_filename": text_filename
-            })
+        # Execute the training process with the given JSON configuration file
         train_main(json_file_path)
-        
+
     except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+        raise RuntimeError(f"Error during training: {e}")
     finally:
         shutil.rmtree(temp_dir)
 
-if __name__ == "__main__":
-    uvicorn.run(app, port=8000, host="0.0.0.0")
+# Example usage:
+# train_lora('/path/to/your/csvfile.csv', 'some_param')
