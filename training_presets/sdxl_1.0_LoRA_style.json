@@ -14,7 +14,7 @@
     "weight_dtype": "FLOAT_16",
     "output_dtype": "FLOAT_32",
     "output_model_format": "SAFETENSORS",
-    "output_model_destination": "model/model.safetensors",
+    "output_model_destination": "model/lora_model.safetensors",
     "gradient_checkpointing": true,
     "force_circular_padding": false,
     "concept_file_name": "training_concepts/concepts.json",
